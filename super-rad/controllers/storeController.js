@@ -51,7 +51,7 @@ exports.getStores = async (req, res) => {
   const stores = await Store.find();
   console.log(stores);
   res.render('stores', { title: 'Stores', stores });
-}
+};
 
 exports.editStore = async (req, res) => {
   // 1. Find the store given ID
@@ -60,7 +60,7 @@ exports.editStore = async (req, res) => {
   // 2. Confirm they are owner of the store
   // 3. Render out the edit form so the user can update their store
   res.render('editStore', { title: `Edit ${store.name}`, store });
-}
+};
 
 exports.updateStore = async (req, res) => {
   req.body.location.type = 'Point';
@@ -71,10 +71,21 @@ exports.updateStore = async (req, res) => {
   }).exec();
   req.flash('success', `Successfully updated <strong>${store.name}</strong>. <a href="/stores/${store.slug}">View Store ➡️</a>`);
   res.redirect(`/stores/${store._id}/edit`);
-}
+};
 
 exports.getStoreBySlug = async (req, res) => {
   const store = await Store.findOne({ slug: req.params.slug });
   if (!store) return next();
   res.render('store', { title: store.name, store });
-}
+};
+
+exports.getStoresByTag = async (req, res) => {
+  const tag = req.params.tag;
+  const tagQuery = tag || { $exists: true };
+
+  const tagsPromise = Store.getTagsList();
+  const storesPromise = Store.find({ tags: tagQuery});
+  const [tags, stores] = await Promise.all([tagsPromise, storesPromise]);
+
+  res.render('tag', { title: 'Tags', tag, tags, stores });
+};
