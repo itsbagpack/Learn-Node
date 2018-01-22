@@ -1,9 +1,10 @@
 const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 mongoose.Promise = global.Promise; // Use built-in ES6 Promise. Alternatives are Bluebird
 const slug = require('slugs'); // Allow us to make URL-friendly names for our slugs, similar to Wordpress perma link
 
 // Protip: do all data normalization on the model, right before saving to DB
-const storeSchema = new mongoose.Schema({
+const storeSchema = new Schema({
   name: {
     type: String,
     trim: true, // trims whitespace before saving
